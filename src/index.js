@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const sequelize = require('./config/db.config')
+const cors = require('cors')
 
 const User = require('./models/user')
 const Category = require('./models/category')
@@ -35,6 +36,9 @@ Category.hasMany(Advert, { foreignKey: 'adv_catid'})
 Advert.belongsTo(Category, { foreignKey: 'adv_catid'})
 
 const app = express()
+app.use(cors({
+  origin: 'https://topla.herokuapp.com'
+}))
 
 app.use(bodyParser.json())
 
