@@ -32,8 +32,10 @@ exports.register = function(req, res) {
       res.json({ user, message: "account created successfully !" });
     })
     .catch((err) => {
-      res.status(500).send({
-        message: err.message,
+      res.status(500).json({
+        errors: {
+          'message': 'Un problème est apparu: cet email est sans doute déjà utilisé'
+        }
       });
     });
 };
@@ -64,13 +66,11 @@ exports.login = function(req, res) {
     }
 
    const originalPassword = user[0].dataValues.password
-   console.log(user[0].dataValues);
 
    bcrypt
     .compare(password, originalPassword)
     .then((isMatch) => {
       if (isMatch) {
-        console.log('matched');
         const { id, firstName, lastName, birthdate, email, createdAt } = user[0].dataValues
         const payload = { id, email }
 
@@ -88,15 +88,19 @@ exports.login = function(req, res) {
           })
         })
       } else {
-        return res.status(400).json({message: 'Something went wrong'})
+        return res.status(400).json({errors: {'message': 'Les données renseignées ne sont pas valides'}})
       }
     })
     .catch((err) => {
-      console.log(err);
+      res.status(422).json({errors: {
+        'message': 'Something went wrong'
+      }})
     })
-    .catch((err) => {
-      res.status(500).json({err})
-    })
+  })
+    .catch(() => {
+    res.status(500).send({errors: {
+      'message': 'Les données renseignées ne sont pas valides'
+    }})
   });
 };
 
