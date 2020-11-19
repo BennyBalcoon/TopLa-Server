@@ -30,10 +30,10 @@ sequelize
 //           console.log(err);
 //         })
 
-User.hasMany(Advert, { foreignKey: 'adv_usrid'})
-Advert.belongsTo(User, { foreignKey: 'adv_usrid'})
-Category.hasMany(Advert, { foreignKey: 'adv_catid'})
-Advert.belongsTo(Category, { foreignKey: 'adv_catid'})
+// User.hasMany(Advert, { foreignKey: 'adv_usrid'})
+// Advert.belongsTo(User, { foreignKey: 'adv_usrid'})
+// Category.hasMany(Advert, { foreignKey: 'adv_catid'})
+// Advert.belongsTo(Category, { foreignKey: 'adv_catid'})
 
 const app = express()
 app.use(cors({

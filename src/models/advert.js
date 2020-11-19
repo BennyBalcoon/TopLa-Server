@@ -1,6 +1,9 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../config/db.config')
 
+const User = require('./user')
+const Category = require('./category')
+
 const Advert = sequelize.define('adverts', {
     id: {
         type: Sequelize.INTEGER,
@@ -8,6 +11,12 @@ const Advert = sequelize.define('adverts', {
         allowNull: false,
         primaryKey: true,
         field: 'adv_id'
+      },
+      kind: {
+        type: Sequelize.ENUM,
+        allowNull: false,
+        values: ['Don', 'Demande'],
+        field: 'adv_kind'  
       },
       title: {
         type: Sequelize.STRING,
@@ -19,10 +28,10 @@ const Advert = sequelize.define('adverts', {
         allowNull: false,
         field: 'adv_description'
       },
-      image1: {
+      image: {
         type: Sequelize.STRING,
         allowNull: false,
-        field: 'avd_first_image'
+        field: 'adv_image'
       },
       image2: {
         type: Sequelize.STRING,
@@ -32,8 +41,14 @@ const Advert = sequelize.define('adverts', {
         type: Sequelize.STRING,
         field: 'adv_third_image'
       },
+      condition: {
+        type: Sequelize.ENUM,
+        allowNull: false,
+        values: ['comme neuf', 'bon état', 'état moyen', 'à retaper'],
+        field: 'adv_condition' 
+      },
       location: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.STRING,
           allowNull: false,
           field: 'adv_location'
       },
@@ -44,24 +59,23 @@ const Advert = sequelize.define('adverts', {
       updatedAt: {
         type: Sequelize.DATE,
         field: 'adv_updatedat'
-      }
-      
-    //   usrid: {
-    //      type: Sequelize.INTEGER,
-    //      field: 'adv_usrid',
-    //      references: {
-    //          model: User,
-    //          key: 'usr_id'
-    //      } 
-    //   },
-    //   catid: {
-    //     type: Sequelize.INTEGER,
-    //     field: 'adv_catid',
-    //     references: {
-    //         model: Category,
-    //         key: 'cat_id'
-    //     } 
-    //  }
+      },
+      user: {
+         type: Sequelize.INTEGER,
+         field: 'adv_usrid',
+         references: {
+             model: User,
+             key: 'usr_id'
+         } 
+      },
+      category: {
+        type: Sequelize.INTEGER,
+        field: 'adv_catid',
+        references: {
+            model: Category,
+            key: 'cat_id'
+        } 
+     }
 
 })
 
