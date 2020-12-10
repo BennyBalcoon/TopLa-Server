@@ -60,23 +60,36 @@ const Advert = sequelize.define('adverts', {
         type: Sequelize.DATE,
         field: 'adv_updatedat'
       },
-      user: {
+      adv_usrid: {
          type: Sequelize.INTEGER,
-         field: 'adv_usrid',
          references: {
              model: User,
              key: 'usr_id'
          } 
       },
-      category: {
+    //   user: {
+    //     type: Sequelize.INTEGER,
+    //     field: 'adv_usrid',
+    //     references: {
+    //         model: User,
+    //         key: 'usr_id'
+    //     } 
+    //  },
+      adv_catid: {
         type: Sequelize.INTEGER,
-        field: 'adv_catid',
         references: {
             model: Category,
             key: 'cat_id'
         } 
      }
-
+  //   category: {
+  //     type: Sequelize.INTEGER,
+  //     field: 'adv_catid',
+  //     references: {
+  //         model: Category,
+  //         key: 'cat_id'
+  //     } 
+  //  }
 })
 
 module.exports = Advert
