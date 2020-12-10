@@ -1,4 +1,5 @@
 const User = require("../models/user");
+// const Advert = require('../models/advert')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const dotenv = require ('dotenv')
@@ -130,3 +131,31 @@ exports.getCurrentUser = (req, res) => {
 
   return res.json(user)
 }
+
+exports.updateUser = (req, res) => {
+  const userData = req.body;
+  const currentUserId = req.user[0].dataValues.id
+  const userId = req.params.id;
+
+  User.findByPk(userId)
+    .then((user) => {
+      if (user.id === currentUserId) {
+        user.update(userData, {
+          where: {
+            id: userId
+          },
+          returning: true,
+          plain: true
+        })
+        .then((user) => {
+          res.json(user);
+        })
+      } else {
+        res.status(422).json({errors: 'Authorization error!'})
+      }
+    })
+    .catch((err) => {
+      res.status(422).json(err)
+    })
+}
+
