@@ -21,6 +21,11 @@ const User = sequelize.define('users', {
     allowNull: false,
     field: 'usr_lastname'
   },
+  avatar: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    field: 'usr_avatar'
+  },
   birthdate: {
     type: Sequelize.DATE,
     allowNull: false,
@@ -29,12 +34,14 @@ const User = sequelize.define('users', {
   email: {
     type: Sequelize.STRING,
     allowNull: false,
-    unique: true,
+    unique: {
+      args: true,
+      msg: 'Email address already in use!'
+  },
     field: 'usr_email',
     validate: {
       isEmail: {msg: 'Please provide valid e-mail address'},
       isLowercase: true
-      // is: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/]
     }
   },
   password: {
@@ -46,18 +53,13 @@ const User = sequelize.define('users', {
       min: 8,
       max: 16
     }
-    // set(value) {
-    //   this.setDataValue('password', bcrypt.hashSync(value, 10))
-    // }
   },
   createdAt: {
     type: Sequelize.DATE,
-    // allowNull: false,
     field: 'usr_createdat'
   },
   updatedAt: {
     type: Sequelize.DATE,
-    // allowNull: false,
     field: 'usr_updatedat'
   }
 }, {

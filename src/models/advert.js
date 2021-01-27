@@ -1,4 +1,4 @@
-const Sequelize = require('sequelize');
+const {Sequelize, DataTypes} = require('sequelize');
 const sequelize = require('../config/db.config')
 
 const User = require('./user')
@@ -47,11 +47,16 @@ const Advert = sequelize.define('adverts', {
         values: ['comme neuf', 'bon état', 'état moyen', 'à retaper'],
         field: 'adv_condition' 
       },
-      location: {
+      address: {
           type: Sequelize.STRING,
           allowNull: false,
-          field: 'adv_location'
+          field: 'adv_address'
       },
+      location: {
+        type: DataTypes.GEOGRAPHY('POINT', 4236),
+        allowNull: false,
+        field: 'adv_location'
+    },
       createdAt: {
         type: Sequelize.DATE,
         field: 'adv_createdat'

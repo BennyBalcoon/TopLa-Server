@@ -1,33 +1,30 @@
 const { Op } = require("sequelize");
+const geocoder = require("../services/geocode")
 
 const Advert = require("../models/advert");
 const Category = require("../models/category");
 const User = require("../models/user");
 
 exports.getAdverts = (req, res) => {
-
   const where = {
     [Op.and]: [],
   };
   const validParams = {
-    title: 'iLike',
-    kind: 'eq',
-    description: 'iLike',
-    location: 'iLike',
-    condition: 'eq',
-  }
+    title: "iLike",
+    kind: "eq",
+    description: "iLike",
+    location: "iLike",
+    condition: "eq",
+  };
 
   for (paramName in req.query) {
     if (req.query.hasOwnProperty(paramName)) {
-      if (
-        validParams[paramName] &&
-        req.query[paramName]
-      ) {
+      if (validParams[paramName] && req.query[paramName]) {
         let searchString;
-        if (validParams[paramName] == 'iLike') {
-           searchString = `%${req.query[paramName]}%`
+        if (validParams[paramName] == "iLike") {
+          searchString = `%${req.query[paramName]}%`;
         } else {
-           searchString = `${req.query[paramName]}`
+          searchString = `${req.query[paramName]}`;
         }
         where[Op.and].push({
           [`${paramName}`]: {
@@ -56,7 +53,19 @@ exports.getAdverts = (req, res) => {
         return res.status(422).send({ err });
       });
   } else {
-    return res.json({});
+    Advert.findAll({
+      include: [
+        {
+          model: Category,
+        },
+      ],
+    })
+      .then((adverts) => {
+        return res.json(adverts);
+      })
+      .catch((err) => {
+        return res.status(422).send({ err });
+      });
   }
 };
 
@@ -66,7 +75,7 @@ exports.getAdvertById = (req, res) => {
   Advert.findByPk(id, {
     include: {
       model: User,
-      attributes: ["firstName", "createdAt"],
+      attributes: ["firstName", "avatar", "createdAt"],
     },
   })
     .then((advert) => {
@@ -84,18 +93,30 @@ exports.createAdvert = (req, res) => {
     return res.status(403).send({ err: "no user data" });
   }
   advertData.adv_usrid = currentUserId;
-  console.log(advertData);
-  const advert = new Advert(advertData);
-
-  advert
-    .save()
-    .then((advert) => {
-      res.status(201).json({ advert, message: "Nouvelle annonce créée avec succès" });
-    })
-    .catch((err) => {
-      return res.status(400).json(err);
-    });
-};
+  
+  geocoder.geocode(req.body.address)
+    .then((geocodeRes) => {
+      const latitude = geocodeRes[0].latitude
+      const longitude = geocodeRes[0].longitude
+      advertData.location = { type: 'Point',
+                              coordinates: [latitude, longitude]}
+    
+      const advert = new Advert(advertData);
+    
+      advert
+        .save()
+        .then((advert) => {
+          return res.status(201).json({ advert, message: "Nouvelle annonce créée avec succès" });
+        })
+        .catch((err) => {
+          return res.status(400).json(err);
+        })
+      })
+      .catch((err) => {
+        return res.status(500).json(err);
+      })
+    };
+      
 
 exports.getAdvertsByUser = (req, res) => {
   const currentUserId = req.user[0].dataValues.id;

@@ -9,6 +9,7 @@ dotenv.config()
 exports.register = function(req, res) {
   const firstName = req.body.firstname;
   const lastName = req.body.lastname;
+  const avatar = req.body.avatar;
   const birthdate = req.body.birthdate;
   const email = req.body.email;
   const password = req.body.password;
@@ -25,6 +26,7 @@ exports.register = function(req, res) {
   User.create({
     firstName: firstName,
     lastName: lastName,
+    avatar: avatar,
     birthdate: birthdate,
     email: email,
     password: password,
@@ -34,8 +36,7 @@ exports.register = function(req, res) {
     })
     .catch((err) => {
       res.status(500).json({
-        errors: {
-          'message': 'Un problème est apparu: cet email est sans doute déjà utilisé'
+        errors: { err, message: 'Un problème est apparu: cet email est sans doute déjà utilisé'
         }
       });
     });
@@ -72,7 +73,7 @@ exports.login = function(req, res) {
     .compare(password, originalPassword)
     .then((isMatch) => {
       if (isMatch) {
-        const { id, firstName, lastName, birthdate, email, createdAt } = user[0].dataValues
+        const { id, firstName, lastName, avatar, birthdate, email, createdAt } = user[0].dataValues
         const payload = { id, email }
 
         jwt.sign(payload, process.env.JWT_SECRET, {
@@ -82,6 +83,7 @@ exports.login = function(req, res) {
             id: id,
             firstName: firstName,
             lastName: lastName,
+            avatar: avatar,
             birthdate: birthdate,
             email: email,
             createdAt: createdAt,
